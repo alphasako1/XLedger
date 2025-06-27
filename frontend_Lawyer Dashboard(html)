@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Lawyer Dashboard</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+   
+    <div id="billable-box"> $0.00</div>
+
+    <h1>Lawyer Dashboard</h1>
+    <p style="text-align: center;">Log a task below:</p>
+
+    <div class="task-form">
+      <label>Task:</label><br />
+      <input type="text" placeholder="e.g. Call with client" /><br /><br />
+
+      <label>Hours:</label><br />
+      <input type="number" placeholder="e.g. 1.5" /><br /><br />
+
+      <button>Log Task</button>
+    </div>
+
+    <h2>Task List</h2>
+    <ul>
+    </ul>
+
+    <div style="text-align: center; margin-top: 40px;">
+      <button id="send-invoice">Send Invoice</button>
+    </div>
+  </body>
+</html>
