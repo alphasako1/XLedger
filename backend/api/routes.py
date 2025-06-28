@@ -1,32 +1,44 @@
-from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel
-from backend.services import auth
-from backend.db import models, database
+from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
+from pydantic import BaseModel
+from backend.db.database import get_db
+from backend.services import auth
+from backend.utils.security import get_password_hash
+from backend.db import models
 
 router = APIRouter()
 
-def get_db():
-    db = database.SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+# --------------------
+# Pydantic Schemas
+# --------------------
 
-class UserCreate(BaseModel):
+class RegisterData(BaseModel):
     email: str
     password: str
-    role: str  # 'lawyer' or 'client'
+    role: str  # e.g., "lawyer" or "client"
+
+class LoginData(BaseModel):
+    email: str
+    password: str
+
+# --------------------
+# API Routes
+# --------------------
 
 @router.post("/register")
-def register(user: UserCreate, db: Session = Depends(get_db)):
-    existing = db.query(models.User).filter_by(email=user.email).first()
-    if existing:
-        raise HTTPException(status_code=400, detail="Email already registered")
+def register_user(data: RegisterData, db: Session = Depends(get_db)):
+    existing_user = db.query(models.User).filter(models.User.email == data.email).first()
+    if existing_user:
+        return {"error": "User already exists"}
 
-    hashed_pw = auth.hash_password(user.password)
-    new_user = models.User(email=user.email, password=hashed_pw, role=user.role)
-    db.add(new_user)
+    hashed_password = get_password_hash(data.password)
+    user = models.User(email=data.email, password=hashed_password, role=data.role)
+    db.add(user)
     db.commit()
-    db.refresh(new_user)
-    return {"msg": "User created", "user_id": new_user.id}
+    db.refresh(user)
+    return {"msg": "User created", "user_id": user.id}
+
+@router.post("/login")
+def login_user(data: LoginData, db: Session = Depends(get_db)):
+    return auth.login_user(db, data.email, data.password)
+
