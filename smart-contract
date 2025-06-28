@@ -1,0 +1,68 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.20;
+
+contract XLedgerBilling {
+    struct TimeLog {
+        address firm;
+        address solicitor;
+        address client;
+        bytes32 hash;
+        uint256 timestamp;
+    }
+
+    mapping(uint256 => TimeLog) public logs;
+    uint256 public logCount;
+
+    address public owner;
+    mapping(address => bool) public authorizedFirms;
+
+    event TimeLogRecorded(
+        uint256 indexed logId,
+        address indexed firm,
+        address indexed client,
+        bytes32 hash,
+        uint256 timestamp
+    );
+
+    constructor() {
+        owner = msg.sender;
+    }
+
+    modifier onlyOwner() {
+        require(msg.sender == owner, "Not owner");
+        _;
+    }
+
+    modifier onlyAuthorizedFirm() {
+        require(authorizedFirms[msg.sender], "Not authorized firm");
+        _;
+    }
+
+    function addAuthorizedFirm(address firm) external onlyOwner {
+        authorizedFirms[firm] = true;
+    }
+
+    function recordTimeLog(
+        address solicitor,
+        address client,
+        bytes32 hash
+    ) external onlyAuthorizedFirm {
+        logs[logCount] = TimeLog(
+            msg.sender,
+            solicitor,
+            client,
+            hash,
+            block.timestamp
+        );
+
+        emit TimeLogRecorded(
+            logCount,
+            msg.sender,
+            client,
+            hash,
+            block.timestamp
+        );
+
+        logCount++;
+    }
+}
