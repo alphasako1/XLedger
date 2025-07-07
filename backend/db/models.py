@@ -28,4 +28,20 @@ class Case(Base):
     # Relationships
     lawyer = relationship("User", back_populates="cases_as_lawyer", foreign_keys=[lawyer_id])
     client = relationship("User", back_populates="cases_as_client", foreign_keys=[client_id])
+    
+    logs = relationship("ProgressLog", back_populates="case")
 
+
+class ProgressLog(Base):
+    __tablename__ = 'progress_logs'
+
+    id = Column(Integer, primary_key=True, index=True)
+    case_id = Column(Integer, ForeignKey("cases.id"))
+    lawyer_id = Column(Integer, ForeignKey("users.id"))
+    description = Column(String)
+    time_spent = Column(Integer)  # minutes
+    timestamp = Column(String)
+    is_edited = Column(Boolean, default=False)
+
+    case = relationship("Case", back_populates="logs")
+    lawyer = relationship("User")
