@@ -1,6 +1,8 @@
-from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import Column, Integer, String, ForeignKey, Boolean
 from sqlalchemy.orm import relationship
 from backend.db.database import Base
+from sqlalchemy import DateTime
+from datetime import datetime
 
 class User(Base):
     __tablename__ = 'users'
@@ -45,3 +47,28 @@ class ProgressLog(Base):
 
     case = relationship("Case", back_populates="logs")
     lawyer = relationship("User")
+
+class EditHistory(Base):
+    __tablename__ = 'edit_history'
+
+    id = Column(Integer, primary_key=True, index=True)
+    log_id = Column(Integer, ForeignKey("progress_logs.id"))
+    old_description = Column(String)
+    old_time_spent = Column(Integer)
+    edited_at = Column(DateTime, default=datetime.utcnow)
+
+    log = relationship("ProgressLog", backref="edit_history")
+
+class ProgressLogHistory(Base):
+    __tablename__ = 'progress_log_history'
+
+    id = Column(Integer, primary_key=True, index=True)
+    log_id = Column(Integer, ForeignKey("progress_logs.id"))
+    old_description = Column(String)
+    old_time_spent = Column(Integer)
+    edited_at = Column(String)
+    edited_by = Column(Integer, ForeignKey("users.id"))
+
+    log = relationship("ProgressLog")
+    editor = relationship("User")
+
