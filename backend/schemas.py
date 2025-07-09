@@ -19,7 +19,7 @@ class UserOut(BaseModel):
     role: str
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class CaseOut(BaseModel):
     id: int
@@ -29,7 +29,7 @@ class CaseOut(BaseModel):
     client_id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class ProgressLogData(BaseModel):
     case_id: int
@@ -43,10 +43,22 @@ class ProgressLogOut(BaseModel):
     description: str
     time_spent: int
     timestamp: str
+    is_edited: bool
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class EditProgressLogData(BaseModel):
     description: str
     time_spent: int
+
+class ProgressLogHistoryOut(BaseModel):
+    id: int
+    log_id: int
+    old_description: str
+    old_time_spent: int
+    edited_at: str
+    edited_by: int
+
+    class Config:
+        from_attributes = True
