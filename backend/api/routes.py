@@ -5,13 +5,25 @@ from backend.services import auth
 from backend.utils.security import get_password_hash, get_current_user
 from backend.db import models
 from backend.db.models import User, Case
-from backend.schemas import RegisterData, LoginData, UserOut, CaseData, CaseOut
 from datetime import datetime
-from backend.schemas import CaseOut, ProgressLogData
 from backend.db.models import ProgressLog
 from typing import List
 from pydantic import BaseModel
 from fastapi import Path
+from backend.db.models import ProgressLogHistory  # 👈 add this import
+
+
+from backend.schemas import (
+    RegisterData,
+    LoginData,
+    UserOut,
+    CaseData,
+    CaseOut,
+    ProgressLogData,
+    ProgressLogOut,
+    EditProgressLogData,
+    ProgressLogHistoryOut  # 👈 Add this
+)
 
 router = APIRouter()
 
@@ -85,14 +97,6 @@ def log_progress(
     db.refresh(log)
     return {"msg": "Progress logged", "log_id": log.id}
 
-class ProgressLogOut(BaseModel):
-    id: int
-    description: str
-    time_spent: int
-    timestamp: str
-
-    class Config:
-        orm_mode = True
 
 @router.get("/case_logs/{case_id}", response_model=List[ProgressLogOut])
 def get_case_logs(case_id: int, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
@@ -126,10 +130,47 @@ def edit_progress_log(
     if current_user.role != "lawyer" or log.lawyer_id != current_user.id:
         raise HTTPException(status_code=403, detail="Unauthorized to edit this log")
 
+    # ✅ Insert this block *before* modifying the log
+    history = ProgressLogHistory(
+        log_id=log.id,
+        old_description=log.description,
+        old_time_spent=log.time_spent,
+        edited_at=datetime.utcnow().isoformat(),
+        edited_by=current_user.id
+    )
+    db.add(history)
+
+    # ✅ Now update the original log
     log.description = data.description
     log.time_spent = data.time_spent
     log.is_edited = True
+
     db.commit()
     db.refresh(log)
 
     return {"msg": "Log updated", "log_id": log.id}
+
+@router.get("/log_history/{log_id}")
+def get_log_history(
+    log_id: int,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    # Confirm log exists and user is involved in the case
+    log = db.query(ProgressLog).filter(ProgressLog.id == log_id).first()
+    if not log:
+        raise HTTPException(status_code=404, detail="Log not found")
+
+    case = db.query(Case).filter(Case.id == log.case_id).first()
+    if not case:
+        raise HTTPException(status_code=404, detail="Case not found")
+
+    if current_user.role == "lawyer" and case.lawyer_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Unauthorized: not your log")
+
+    if current_user.role == "client" and case.client_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Unauthorized: not your log")
+
+    # Return the history
+    history = db.query(ProgressLogHistory).filter(ProgressLogHistory.log_id == log_id).all()
+    return history
