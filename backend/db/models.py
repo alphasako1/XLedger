@@ -72,3 +72,14 @@ class ProgressLogHistory(Base):
     log = relationship("ProgressLog")
     editor = relationship("User")
 
+class CaseSummary(Base):
+    __tablename__ = 'case_summaries'
+
+    id = Column(Integer, primary_key=True, index=True)
+    case_id = Column(Integer, ForeignKey("cases.id"), unique=True)
+    summary_text = Column(String)
+    total_logs = Column(Integer, default=0)
+    total_time_spent = Column(Integer, default=0)
+
+    case = relationship("Case", backref="summary")
+
