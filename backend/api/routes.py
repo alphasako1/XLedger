@@ -22,7 +22,8 @@ from backend.schemas import (
     ProgressLogData,
     ProgressLogOut,
     EditProgressLogData,
-    ProgressLogHistoryOut  # 👈 Add this
+    ProgressLogHistoryOut,
+    CaseSummaryOut
 )
 
 router = APIRouter()
@@ -95,6 +96,22 @@ def log_progress(
     db.add(log)
     db.commit()
     db.refresh(log)
+    
+    summary = db.query(models.CaseSummary).filter(models.CaseSummary.case_id == data.case_id).first()
+    if summary:
+        summary.total_logs += 1
+        summary.total_time_spent += data.time_spent
+
+    else:
+        summary = models.CaseSummary(
+            case_id=data.case_id,
+            summary_text="",
+            total_logs=1,
+            total_time_spent=data.time_spent
+        )
+    db.add(summary)
+    db.commit()
+
     return {"msg": "Progress logged", "log_id": log.id}
 
 
@@ -148,9 +165,16 @@ def edit_progress_log(
     db.commit()
     db.refresh(log)
 
+    # ✅ Adjust case summary after log edit
+    summary = db.query(models.CaseSummary).filter(models.CaseSummary.case_id == log.case_id).first()
+    if summary:
+        time_diff = data.time_spent - history.old_time_spent
+        summary.total_time_spent += time_diff
+        db.commit()
+
     return {"msg": "Log updated", "log_id": log.id}
 
-@router.get("/log_history/{log_id}")
+@router.get("/log_history/{log_id}", response_model=List[ProgressLogHistoryOut])
 def get_log_history(
     log_id: int,
     current_user: User = Depends(get_current_user),
@@ -174,3 +198,27 @@ def get_log_history(
     # Return the history
     history = db.query(ProgressLogHistory).filter(ProgressLogHistory.log_id == log_id).all()
     return history
+
+@router.get("/case_summary/{case_id}", response_model=CaseSummaryOut)
+def get_case_summary(
+    case_id: int,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    case = db.query(Case).filter(Case.id == case_id).first()
+
+    if not case:
+        raise HTTPException(status_code=404, detail="Case not found")
+
+    if current_user.role == "lawyer" and case.lawyer_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Unauthorized: not your case")
+    if current_user.role == "client" and case.client_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Unauthorized: not your case")
+
+    summary = db.query(models.CaseSummary).filter(models.CaseSummary.case_id == case_id).first()
+
+    if not summary:
+        return {"msg": "No summary found yet", "case_id": case_id}
+
+    return summary
+
