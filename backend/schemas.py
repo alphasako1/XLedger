@@ -62,3 +62,11 @@ class ProgressLogHistoryOut(BaseModel):
 
     class Config:
         from_attributes = True
+
+class CaseSummaryOut(BaseModel):
+    case_id: int
+    total_logs: int
+    total_time_spent: int
+
+    class Config:
+        from_attributes = True
