@@ -1,0 +1,123 @@
+/* Base page styles */
+body {
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(to right, #ccf2e8, #cce3f9); /* Light blue/green */
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 50px;
+  overflow-y: scroll;
+}
+
+/* Container wrapper */
+.portal-container {
+  width: 100%;
+  max-width: 960px;
+  padding: 20px;
+}
+
+/* Header styles */
+header h1 {
+  text-align: center;
+  font-size: 2.5em;
+  color: #000;
+  margin-bottom: 40px;
+  font-weight: 600;
+}
+
+.brand-green {
+  color: #00A651; /* Matches the green X from login screen */
+}
+
+/* Invoice card with glass effect */
+.invoice-card {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 16px;
+  padding: 30px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(200, 200, 200, 0.3);
+}
+
+/* Invoice metadata section */
+.invoice-meta {
+  font-size: 16px;
+  line-height: 1.8;
+  margin-bottom: 30px;
+}
+
+.invoice-meta i {
+  margin-right: 6px;
+  color: #007bff;
+}
+
+/* Table styling */
+.invoice-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+.invoice-table th {
+  background-color: #007bff;
+  color: white;
+  padding: 12px;
+  text-align: left;
+}
+
+.invoice-table td {
+  background-color: #ffffff;
+  padding: 12px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+/* Status icons */
+.verified i {
+  color: green;
+  font-size: 1.2em;
+  display: block;
+  text-align: center;
+}
+
+.unverified i {
+  color: red;
+  font-size: 1.2em;
+  display: block;
+  text-align: center;
+}
+
+/* Tooltip cursor */
+td[title] {
+  cursor: help;
+}
+
+/* Total section */
+.invoice-total {
+  text-align: right;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.invoice-total span {
+  color: #007bff;
+}
+
+/* Footer */
+footer {
+  text-align: center;
+  font-size: 14px;
+  color: #555;
+  margin-top: 40px;
+}
+
+footer a {
+  color: #007bff;
+  text-decoration: none;
+  margin: 0 6px;
+}
+
+footer a:hover {
+  text-decoration: underline;
+}
