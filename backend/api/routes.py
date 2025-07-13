@@ -3,14 +3,20 @@ from sqlalchemy.orm import Session
 from backend.db.database import get_db
 from backend.services import auth
 from backend.utils.security import get_password_hash, get_current_user
+from backend.utils.id_generator import generate_case_id, generate_log_id
 from backend.db import models
-from backend.db.models import User, Case
-from datetime import datetime
-from backend.db.models import ProgressLog
+from datetime import datetime, timezone
 from typing import List
-from pydantic import BaseModel
 from fastapi import Path
-from backend.db.models import ProgressLogHistory  # 👈 add this import
+
+
+from backend.db.models import (
+    User,
+    Case,
+    ProgressLog,
+    ProgressLogHistory,
+    CaseStatusChange
+) 
 
 
 from backend.schemas import (
@@ -23,7 +29,9 @@ from backend.schemas import (
     ProgressLogOut,
     EditProgressLogData,
     ProgressLogHistoryOut,
-    CaseSummaryOut
+    CaseSummaryOut,
+    CaseStatusChangeOut,
+    UpdateCaseStatusData,
 )
 
 router = APIRouter()
@@ -58,7 +66,9 @@ def create_case(data: CaseData, current_user: User = Depends(get_current_user), 
     if current_user.role != "lawyer":
         raise HTTPException(status_code=403, detail="Only lawyers can create cases")
 
-    case = Case(title=data.title, lawyer_id=current_user.id, client_id=data.client_id)
+
+    case_id = generate_case_id(db, current_user.id, data.client_id)
+    case = Case(id=case_id, title=data.title, lawyer_id=current_user.id, client_id=data.client_id)
     db.add(case)
     db.commit()
     db.refresh(case)
@@ -71,6 +81,66 @@ def get_my_cases(current_user: User = Depends(get_current_user), db: Session = D
     else:
         cases = db.query(Case).filter(Case.client_id == current_user.id).all()
     return cases
+
+@router.put("/update_case_status/{case_id}")
+def update_case_status(
+    case_id: str,
+    data: UpdateCaseStatusData,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    case = db.query(Case).filter(Case.id == case_id).first()
+    if not case:
+        raise HTTPException(status_code=404, detail="Case not found")
+
+    if current_user.role != "lawyer" or case.lawyer_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Unauthorized")
+
+    # Determine new status
+    if data.status == "other":
+        if not data.custom_status:
+            raise HTTPException(status_code=400, detail="Custom status required for 'other'")
+        new_status = data.custom_status.lower().replace(" ", "_")
+    else:
+        new_status = data.status
+
+    # Log status change
+    change = CaseStatusChange(
+        case_id=case.id,
+        old_status=case.status,
+        new_status=new_status,
+        changed_by=current_user.id,
+        reason=data.reason.strip() if data.reason and data.reason.strip() != "string" else "Updated by lawyer"
+
+    )
+    db.add(change)
+
+    # Update case
+    case.status = new_status
+    db.commit()
+
+    return {"msg": f"Case status updated to '{case.status}'"}
+
+
+
+@router.get("/case_status_history/{case_id}", response_model=List[CaseStatusChangeOut])
+def get_case_status_history(
+    case_id: str,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    case = db.query(Case).filter(Case.id == case_id).first()
+    if not case:
+        raise HTTPException(status_code=404, detail="Case not found")
+
+    if current_user.role not in ["lawyer", "client"] or \
+       (current_user.role == "lawyer" and case.lawyer_id != current_user.id) or \
+       (current_user.role == "client" and case.client_id != current_user.id):
+        raise HTTPException(status_code=403, detail="Unauthorized")
+
+    changes = db.query(CaseStatusChange).filter(CaseStatusChange.case_id == case_id).order_by(CaseStatusChange.changed_at.desc()).all()
+    return changes
+
 
 @router.post("/log_progress")
 def log_progress(
@@ -86,12 +156,14 @@ def log_progress(
     if not case:
         raise HTTPException(status_code=404, detail="Case not found or unauthorized")
 
+    log_id = generate_log_id(db, data.case_id)
     log = ProgressLog(
+        id=log_id,
         case_id=data.case_id,
         lawyer_id=current_user.id,
         description=data.description,
         time_spent=data.time_spent,
-        timestamp=datetime.utcnow().isoformat()
+        timestamp=datetime.now(timezone.utc)
     )
     db.add(log)
     db.commit()
@@ -116,7 +188,7 @@ def log_progress(
 
 
 @router.get("/case_logs/{case_id}", response_model=List[ProgressLogOut])
-def get_case_logs(case_id: int, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+def get_case_logs(case_id: str, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
     # Ensure user is involved in the case
     case = db.query(Case).filter(Case.id == case_id).first()
 
@@ -130,12 +202,13 @@ def get_case_logs(case_id: int, current_user: User = Depends(get_current_user), 
         raise HTTPException(status_code=403, detail="Unauthorized: not your case")
 
     logs = db.query(ProgressLog).filter(ProgressLog.case_id == case_id).all()
-    return logs
+    return [ProgressLogOut.model_validate(log) for log in logs]
+
 
 @router.put("/edit_log/{log_id}")
 def edit_progress_log(
-    log_id: int = Path(...),
-    data: EditProgressLogData = Depends(),
+    data: EditProgressLogData,
+    log_id: str = Path(...),
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
@@ -152,7 +225,7 @@ def edit_progress_log(
         log_id=log.id,
         old_description=log.description,
         old_time_spent=log.time_spent,
-        edited_at=datetime.utcnow().isoformat(),
+        edited_at=datetime.now(timezone.utc),
         edited_by=current_user.id
     )
     db.add(history)
@@ -176,7 +249,7 @@ def edit_progress_log(
 
 @router.get("/log_history/{log_id}", response_model=List[ProgressLogHistoryOut])
 def get_log_history(
-    log_id: int,
+    log_id: str,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
@@ -201,7 +274,7 @@ def get_log_history(
 
 @router.get("/case_summary/{case_id}", response_model=CaseSummaryOut)
 def get_case_summary(
-    case_id: int,
+    case_id: str,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
@@ -215,10 +288,14 @@ def get_case_summary(
     if current_user.role == "client" and case.client_id != current_user.id:
         raise HTTPException(status_code=403, detail="Unauthorized: not your case")
 
-    summary = db.query(models.CaseSummary).filter(models.CaseSummary.case_id == case_id).first()
+    total_logs = db.query(ProgressLog).filter(ProgressLog.case_id == case_id).count()
 
-    if not summary:
-        return {"msg": "No summary found yet", "case_id": case_id}
-
-    return summary
-
+    return CaseSummaryOut(
+        case_id=case.id,
+        title=case.title,
+        status=case.status,
+        created_at=case.created_at.isoformat(),
+        lawyer_email=case.lawyer.email,
+        client_email=case.client.email,
+        total_logs=total_logs
+    )
