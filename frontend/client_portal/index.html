@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>XLedger | Client Invoice Portal</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <!-- Font Awesome Icons -->
+  <script src="https://kit.fontawesome.com/a2e0e6a012.js" crossorigin="anonymous"></script>
+  <!-- CSS -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <main class="portal-container">
+    <!-- Header with XLEDGER branding -->
+    <header>
+      <h1><span class="brand-green">X</span>LEDGER Client Invoice Portal</h1>
+    </header>
+
+    <!-- Invoice Display Card -->
+    <section class="invoice-card">
+      <div class="invoice-meta">
+        <p><strong>Invoice ID:</strong> INV-001</p>
+        <p><i class="fas fa-user-tie"></i> <strong>Lawyer:</strong> Jane Smith</p>
+        <p><i class="fas fa-user"></i> <strong>Client:</strong> John Doe</p>
+        <p><strong>Date:</strong> 19 June 2025</p>
+        <p><strong>Created By:</strong> Varshini Dilli Babu</p>
+      </div>
+
+      <!-- Invoice Table -->
+      <table class="invoice-table">
+        <thead>
+          <tr>
+            <th>Task</th>
+            <th>Hours</th>
+            <th>Cost</th>
+            <th>Timestamp</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Consultation</td>
+            <td>2</td>
+            <td>£100</td>
+            <td>10:00 AM</td>
+            <td class="verified" title="Verified"><i class="fas fa-check-circle"></i></td>
+          </tr>
+          <tr>
+            <td>Document Review</td>
+            <td>3</td>
+            <td>£150</td>
+            <td>12:00 PM</td>
+            <td class="verified" title="Verified"><i class="fas fa-check-circle"></i></td>
+          </tr>
+          <tr>
+            <td>Email Draft</td>
+            <td>1</td>
+            <td>£50</td>
+            <td>2:00 PM</td>
+            <td class="unverified" title="Unverified"><i class="fas fa-times-circle"></i></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Total Section -->
+      <div class="invoice-total">
+        <strong>Total:</strong> <span>£300</span>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+      <p>&copy; 2025 XLedger | <a href="#">Contact</a> | <a href="#">Privacy</a></p>
+    </footer>
+  </main>
+
+</body>
+</html>
