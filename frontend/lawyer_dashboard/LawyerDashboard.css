@@ -51,7 +51,7 @@ ul {
   list-style-type: disc;
 }
 
-#billable-box {
+#payment {
   position: absolute;
   top: 20px;
   right: 40px;
