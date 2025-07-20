@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from backend.db.database import get_db
 from backend.services import auth
@@ -8,6 +8,8 @@ from backend.db import models
 from datetime import datetime, timezone
 from typing import List
 from fastapi import Path
+from sqlalchemy import func
+
 
 
 from backend.db.models import (
@@ -15,7 +17,7 @@ from backend.db.models import (
     Case,
     ProgressLog,
     ProgressLogHistory,
-    CaseStatusChange
+    CaseStatusChange,
 ) 
 
 
@@ -32,6 +34,9 @@ from backend.schemas import (
     CaseSummaryOut,
     CaseStatusChangeOut,
     UpdateCaseStatusData,
+    ContractCreate,
+    ContractOut,
+    ClientSignContract
 )
 
 router = APIRouter()
@@ -44,7 +49,10 @@ router = APIRouter()
 def register_user(data: RegisterData, db: Session = Depends(get_db)):
     existing_user = db.query(models.User).filter(models.User.email == data.email).first()
     if existing_user:
-        return {"error": "User already exists"}
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="User with this email already exists"
+        )
 
     hashed_password = get_password_hash(data.password)
     user = models.User(email=data.email, password=hashed_password, role=data.role)
@@ -66,13 +74,32 @@ def create_case(data: CaseData, current_user: User = Depends(get_current_user), 
     if current_user.role != "lawyer":
         raise HTTPException(status_code=403, detail="Only lawyers can create cases")
 
-
     case_id = generate_case_id(db, current_user.id, data.client_id)
-    case = Case(id=case_id, title=data.title, lawyer_id=current_user.id, client_id=data.client_id)
+
+    # Create the case with pending status
+    case = Case(
+        id=case_id,
+        title=data.title,
+        lawyer_id=current_user.id,
+        client_id=data.client_id,
+        status="pending"
+    )
     db.add(case)
+    db.flush()  # get case.id before commit
+
+    # Create the contract automatically
+    contract = models.CaseContract(
+        case_id=case.id,
+        content=data.contract_content,
+        lawyer_signed=True,
+        lawyer_signature=data.lawyer_signature
+    )
+    db.add(contract)
+
     db.commit()
     db.refresh(case)
-    return {"msg": "Case created", "case_id": case.id}
+    return {"msg": "Case and contract created", "case_id": case.id}
+
 
 @router.get("/my_cases", response_model=list[CaseOut])
 def get_my_cases(current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
@@ -81,6 +108,77 @@ def get_my_cases(current_user: User = Depends(get_current_user), db: Session = D
     else:
         cases = db.query(Case).filter(Case.client_id == current_user.id).all()
     return cases
+
+@router.post("/contract", response_model=ContractOut)
+def create_contract(data: ContractCreate, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    if current_user.role != "lawyer":
+        raise HTTPException(status_code=403, detail="Only lawyers can create contracts")
+
+    case = db.query(Case).filter(Case.id == data.case_id, Case.lawyer_id == current_user.id).first()
+    if not case:
+        raise HTTPException(status_code=404, detail="Case not found or unauthorized")
+
+    contract = models.CaseContract(
+        case_id=data.case_id,
+        content=data.content,
+        lawyer_signed=True,
+        lawyer_signature=data.lawyer_signature
+    )
+    db.add(contract)
+    db.commit()
+    db.refresh(contract)
+    return contract
+
+
+@router.post("/contract/{case_id}/sign", response_model=ContractOut)
+def sign_contract(case_id: str, data: ClientSignContract, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    if current_user.role != "client":
+        raise HTTPException(status_code=403, detail="Only clients can sign contracts")
+
+    case = db.query(Case).filter(Case.id == case_id, Case.client_id == current_user.id).first()
+    if not case:
+        raise HTTPException(status_code=404, detail="Case not found or unauthorized")
+
+    contract = db.query(models.CaseContract).filter(models.CaseContract.case_id == case_id).first()
+    if not contract:
+        raise HTTPException(status_code=404, detail="Contract not found")
+
+    contract.client_signed = True
+    contract.client_signature = data.client_signature
+    db.commit()
+
+    # ✅ Check if both parties have signed
+    if contract.lawyer_signed and contract.client_signed:
+        case.status = "active"
+        db.commit()
+
+    db.refresh(contract)
+    return contract
+
+
+@router.get("/contract/{case_id}", response_model=ContractOut)
+def get_contract_by_case(
+    case_id: str,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    contract = db.query(models.CaseContract).filter(models.CaseContract.case_id == case_id).first()
+
+    if not contract:
+        raise HTTPException(status_code=404, detail="Contract not found")
+
+    case = db.query(models.Case).filter(Case.id == case_id).first()
+    if not case:
+        raise HTTPException(status_code=404, detail="Case not found")
+
+    if current_user.id not in [case.lawyer_id, case.client_id]:
+        raise HTTPException(status_code=403, detail="Unauthorized")
+
+    return contract
+
+
+
+
 
 @router.put("/update_case_status/{case_id}")
 def update_case_status(
@@ -289,7 +387,7 @@ def get_case_summary(
         raise HTTPException(status_code=403, detail="Unauthorized: not your case")
 
     total_logs = db.query(ProgressLog).filter(ProgressLog.case_id == case_id).count()
-
+    total_time_spent = db.query(func.sum(ProgressLog.time_spent)).filter(ProgressLog.case_id == case_id).scalar() or 0
     return CaseSummaryOut(
         case_id=case.id,
         title=case.title,
@@ -297,5 +395,6 @@ def get_case_summary(
         created_at=case.created_at.isoformat(),
         lawyer_email=case.lawyer.email,
         client_email=case.client.email,
-        total_logs=total_logs
+        total_logs=total_logs,
+        total_time_spent=total_time_spent
     )
