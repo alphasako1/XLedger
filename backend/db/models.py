@@ -36,6 +36,22 @@ class Case(Base):
     
     logs = relationship("ProgressLog", back_populates="case")
 
+class CaseContract(Base):
+    __tablename__ = "case_contracts"
+
+    id = Column(Integer, primary_key=True, index=True)
+    case_id = Column(String, ForeignKey("cases.id"), unique=True)
+    content = Column(String)  # Markdown or plain text
+    lawyer_signed = Column(Boolean, default=False)
+    client_signed = Column(Boolean, default=False)
+    lawyer_signature = Column(String, nullable=True)
+    client_signature = Column(String, nullable=True)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=datetime.now)
+
+    case = relationship("Case", backref="contract")
+
+
 
 class ProgressLog(Base):
     __tablename__ = 'progress_logs'
@@ -56,7 +72,7 @@ class ProgressLogHistory(Base):
     __tablename__ = 'progress_log_history'
 
     id = Column(Integer, primary_key=True, index=True)
-    log_id = Column(Integer, ForeignKey("progress_logs.id"))
+    log_id = Column(String, ForeignKey("progress_logs.id"))
     old_description = Column(String)
     old_time_spent = Column(Integer)
     edited_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
@@ -69,7 +85,7 @@ class CaseSummary(Base):
     __tablename__ = 'case_summaries'
 
     id = Column(Integer, primary_key=True, index=True)
-    case_id = Column(Integer, ForeignKey("cases.id"), unique=True)
+    case_id = Column(String, ForeignKey("cases.id"), unique=True)
     summary_text = Column(String)
     total_logs = Column(Integer, default=0)
     total_time_spent = Column(Integer, default=0)
@@ -80,7 +96,7 @@ class CaseStatusChange(Base):
     __tablename__ = "case_status_changes"
 
     id = Column(Integer, primary_key=True, index=True)
-    case_id = Column(Integer, ForeignKey("cases.id"))
+    case_id = Column(String, ForeignKey("cases.id"))
     old_status = Column(String)
     new_status = Column(String)
     changed_by = Column(Integer, ForeignKey("users.id"))
