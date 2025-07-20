@@ -1,5 +1,7 @@
 from pydantic import BaseModel
 from datetime import datetime
+from typing import Optional
+
 
 class RegisterData(BaseModel):
     email: str
@@ -13,6 +15,8 @@ class LoginData(BaseModel):
 class CaseData(BaseModel):
     title: str
     client_id: int
+    contract_content: str
+    lawyer_signature: str
 
 class UserOut(BaseModel):
     id: int
@@ -31,6 +35,29 @@ class CaseOut(BaseModel):
 
     class Config:
         from_attributes = True
+
+class ContractCreate(BaseModel):
+    case_id: str
+    content: str
+    lawyer_signature: str
+
+class ClientSignContract(BaseModel):
+    client_signature: str
+
+class ContractOut(BaseModel):
+    id: int
+    case_id: str
+    content: str
+    lawyer_signed: bool
+    client_signed: bool
+    lawyer_signature: Optional[str]
+    client_signature: Optional[str]
+    created_at: datetime
+    updated_at: datetime
+
+    class Config:
+        from_attributes = True
+
 
 class ProgressLogData(BaseModel):
     case_id: str
@@ -72,6 +99,7 @@ class CaseSummaryOut(BaseModel):
     lawyer_email: str
     client_email: str
     total_logs: int
+    total_time_spent: int
 
     class Config:
         from_attributes = True
