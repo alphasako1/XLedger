@@ -9,6 +9,10 @@ h1 {
   text-align: center;
 }
 
+h2 {
+  text-align: center;
+}
+
 .task-form {
   background-color: #ffffff;
   border: 2px solid #333;
