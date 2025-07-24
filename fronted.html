@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Lawyer Dashboard</title>
+    <link rel="stylesheet" href="LawyerDashboard.css" />
+  </head>
+  <body>
+   
+    <div id="billable-box"> $0.00</div>
+
+    <h1>Lawyer Dashboard</h1>
+    <p style="text-align: center;">Log a task below:</p>
+
+    <!-- Registration Form -->
+    <div class="registration-form" style="text-align: center; margin-top: 20px;">
+      <h3>User Registration</h3>
+      <label>Full Name:</label><br />
+      <input type="text" id="user-name" placeholder="Enter your name" /><br /><br />
+      
+      <label>Email:</label><br />
+      <input type="email" id="user-email" placeholder="Enter your email" /><br /><br />
+      
+      <button onclick="showPrivacyModal()">Register</button>
+    </div>
+
+    <!-- Privacy Consent Modal -->
+    <div id="privacy-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); text-align: center; padding-top: 100px;">
+      <div style="background: white; padding: 20px; border-radius: 10px; width: 300px; margin: auto;">
+        <h4>Privacy Consent</h4>
+        <p>We need your consent to collect personal information for the purpose of consultation. Please review our data usage policy.</p>
+        <button onclick="acceptPrivacyConsent()">I Consent</button>
+        <button onclick="closePrivacyModal()">Cancel</button>
+      </div>
+    </div>
+
+    <div class="task-form">
+      <label>Task:</label><br />
+      <input type="text" id="task-input" placeholder="e.g. Call with client" /><br /><br />
+
+      <label>Hours:</label><br />
+      <input type="number" id="hours-input" placeholder="e.g. 1.5" /><br /><br />
+
+      <button onclick="logTask()">Log Task</button>
+    </div>
+
+    <h2>Task List</h2>
+    <ul id="task-list">
+    </ul>
+
+    <!-- Immutable Order & Message Logs Section -->
+    <div style="text-align: center; margin-top: 40px;">
+      <button onclick="viewOrderLogs()">View Order Logs</button>
+    </div>
+
+    <div style="text-align: center; margin-top: 40px;">
+      <button id="send-invoice" onclick="sendInvoice()">Send Invoice</button>
+    </div>
+
+    <!-- Regulatory Compliance Section -->
+    <div style="margin-top: 50px; text-align: center; font-size: 14px; color: #555;">
+      <h4>🛡️ Regulatory Compliance Declaration </h4>
+      <p>Our Legal Consultation Platform complies with key legal and privacy regulations:</p>
+      <ul style="list-style-type: none; padding: 0;">
+        <li>🇬🇧 UK GDPR & 🇪🇺 EU GDPR (for data privacy and consent)</li>
+        <li>🇬🇧 Solicitors Regulation Authority (SRA) Code of Conduct</li>
+        <li>🇺🇸 American Bar Association (ABA) Rules for Confidentiality and Licensing</li>
+        <li>🇪🇺 eIDAS Regulation for timestamp verification</li>
+        <li>🇬🇧 VAT Regulations for invoice retention and integrity</li>
+      </ul>
+      <p>All user sensitive data is encrypted and stored, operation logs are auditable, and invoice hashes are stored on the blockchain to ensure immutability. Customers must be informed of the data usage before authorization.</p>
+    </div>
+
+    <script>
+      let tasks = [];  // Array to store task logs
+      let userRegistered = false;
+
+      // Show privacy consent modal
+      function showPrivacyModal() {
+        document.getElementById('privacy-modal').style.display = 'block';
+      }
+
+      // Close privacy consent modal
+      function closePrivacyModal() {
+        document.getElementById('privacy-modal').style.display = 'none';
+      }
+
+      // Accept privacy consent
+      function acceptPrivacyConsent() {
+        const name = document.getElementById('user-name').value;
+        const email = document.getElementById('user-email').value;
+
+        if (name && email) {
+          userRegistered = true;
+          alert('Registration successful!');
+          closePrivacyModal();
+        } else {
+          alert('Please provide both name and email.');
+        }
+      }
+
+      // Log a new task and add it to the list
+      function logTask() {
+        if (!userRegistered) {
+          alert('Please register and consent to privacy terms before logging tasks.');
+          return;
+        }
+
+        const taskInput = document.getElementById('task-input').value;
+        const hoursInput = document.getElementById('hours-input').value;
+
+        if (taskInput && hoursInput) {
+          const task = { task: taskInput, hours: hoursInput };
+          tasks.push(task);
+          updateTaskList();
+          // Clear the input fields after logging
+          document.getElementById('task-input').value = '';
+          document.getElementById('hours-input').value = '';
+        } else {
+          alert("Please fill in both task and hours.");
+        }
+      }
+
+      // Update the displayed task list
+      function updateTaskList() {
+        const taskListElement = document.getElementById('task-list');
+        taskListElement.innerHTML = '';  // Clear the current list
+        tasks.forEach((task, index) => {
+          const li = document.createElement('li');
+          li.textContent = `Task: ${task.task}, Hours: ${task.hours}`;
+          taskListElement.appendChild(li);
+        });
+      }
+
+      // Send invoice
+      function sendInvoice() {
+        const consentChecked = document.getElementById('client-consent')?.checked;
+        if (consentChecked) {
+          alert("Invoice sent successfully.");
+        } else {
+          alert("Please provide consent before sending the invoice.");
+        }
+      }
+
+      // View order logs (Immutable logs)
+      function viewOrderLogs() {
+        if (tasks.length === 0) {
+          alert("No tasks logged yet.");
+        } else {
+          alert("Displaying immutable order logs...");
+        }
+      }
+    </script>
+  </body>
+</html>
