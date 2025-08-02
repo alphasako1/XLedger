@@ -20,7 +20,7 @@ h1 {
   font-weight: bold;
 }
 
-#login-box {
+#login {
   margin: auto;
   width: 400px;
   background-color: #ffffff;
@@ -64,4 +64,12 @@ input {
 
 p {
   font-size: 30px;
+}
+
+.privacy {
+  font-size: 14px;
+  color: #03396c;
+  text-decoration: underline;
+  display: block;
+  margin-top: 15px;
 }
