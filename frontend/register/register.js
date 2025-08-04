@@ -10,9 +10,9 @@ document.getElementById("register-form").addEventListener("submit", function (e)
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email, password, role })
   })
-    .then(res => {
-      if (!res.ok) return;
-      return res.json();
+    .then(response => {
+      if (!response.ok) return;
+      return response.json();
     })
     .then(data => {
       if (data) {
@@ -21,3 +21,4 @@ document.getElementById("register-form").addEventListener("submit", function (e)
     })
     .catch(err => { });
 });
+
