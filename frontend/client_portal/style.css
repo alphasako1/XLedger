@@ -1,25 +1,21 @@
-/* Base page styles */
 body {
   font-family: 'Poppins', sans-serif;
   margin: 0;
-  padding: 0;
-  background: linear-gradient(to right, #ccf2e8, #cce3f9); /* Light blue/green */
+  padding: 50px 20px;
+  background: linear-gradient(to right, #ccf2e8, #cce3f9);
   min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  padding-top: 50px;
-  overflow-y: scroll;
+  color: #333;
 }
 
-/* Container wrapper */
 .portal-container {
-  width: 100%;
   max-width: 960px;
-  padding: 20px;
+  width: 100%;
 }
 
-/* Header styles */
+/* Branding Header */
 header h1 {
   text-align: center;
   font-size: 2.5em;
@@ -27,12 +23,11 @@ header h1 {
   margin-bottom: 40px;
   font-weight: 600;
 }
-
 .brand-green {
-  color: #00A651; /* Matches the green X from login screen */
+  color: #00A651;
 }
 
-/* Invoice card with glass effect */
+/* Glass Card */
 .invoice-card {
   background: rgba(255, 255, 255, 0.95);
   border-radius: 16px;
@@ -41,11 +36,11 @@ header h1 {
   border: 1px solid rgba(200, 200, 200, 0.3);
 }
 
-/* Invoice metadata section */
+/* Invoice metadata */
 .invoice-meta {
   font-size: 16px;
   line-height: 1.8;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
 }
 
 .invoice-meta i {
@@ -53,7 +48,28 @@ header h1 {
   color: #007bff;
 }
 
-/* Table styling */
+/* Download button */
+.download-btn {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  font-size: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.download-btn i {
+  margin-right: 6px;
+}
+
+.download-btn:hover {
+  background-color: #005ecb;
+}
+
+/* Table styles */
 .invoice-table {
   width: 100%;
   border-collapse: collapse;
@@ -73,7 +89,7 @@ header h1 {
   border-bottom: 1px solid #e0e0e0;
 }
 
-/* Status icons */
+/* Status Icons */
 .verified i {
   color: green;
   font-size: 1.2em;
@@ -82,24 +98,18 @@ header h1 {
 }
 
 .unverified i {
-  color: red;
+  color: #ff9800;
   font-size: 1.2em;
   display: block;
   text-align: center;
 }
 
-/* Tooltip cursor */
-td[title] {
-  cursor: help;
-}
-
-/* Total section */
+/* Total line */
 .invoice-total {
   text-align: right;
   font-size: 18px;
   font-weight: 600;
 }
-
 .invoice-total span {
   color: #007bff;
 }
