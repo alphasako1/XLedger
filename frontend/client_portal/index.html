@@ -4,22 +4,19 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>XLedger | Client Invoice Portal</title>
-  <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
-  <!-- Font Awesome Icons -->
   <script src="https://kit.fontawesome.com/a2e0e6a012.js" crossorigin="anonymous"></script>
-  <!-- CSS -->
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
   <main class="portal-container">
-    <!-- Header with XLEDGER branding -->
+    <!-- Branding Header -->
     <header>
       <h1><span class="brand-green">X</span>LEDGER Client Invoice Portal</h1>
     </header>
 
-    <!-- Invoice Display Card -->
+    <!-- Invoice Card -->
     <section class="invoice-card">
       <div class="invoice-meta">
         <p><strong>Invoice ID:</strong> INV-001</p>
@@ -28,6 +25,9 @@
         <p><strong>Date:</strong> 19 June 2025</p>
         <p><strong>Created By:</strong> Varshini Dilli Babu</p>
       </div>
+
+      <!-- Download Button -->
+      <button class="download-btn"><i class="fas fa-download"></i> Download Invoice</button>
 
       <!-- Invoice Table -->
       <table class="invoice-table">
@@ -46,26 +46,26 @@
             <td>2</td>
             <td>£100</td>
             <td>10:00 AM</td>
-            <td class="verified" title="Verified"><i class="fas fa-check-circle"></i></td>
+            <td class="verified" title="Verified via blockchain"><i class="fas fa-check-circle"></i></td>
           </tr>
           <tr>
             <td>Document Review</td>
             <td>3</td>
             <td>£150</td>
             <td>12:00 PM</td>
-            <td class="verified" title="Verified"><i class="fas fa-check-circle"></i></td>
+            <td class="verified" title="Verified via blockchain"><i class="fas fa-check-circle"></i></td>
           </tr>
           <tr>
             <td>Email Draft</td>
             <td>1</td>
             <td>£50</td>
             <td>2:00 PM</td>
-            <td class="unverified" title="Unverified"><i class="fas fa-times-circle"></i></td>
+            <td class="unverified" title="Unverified - requires review"><i class="fas fa-exclamation-circle"></i></td>
           </tr>
         </tbody>
       </table>
 
-      <!-- Total Section -->
+      <!-- Total Summary -->
       <div class="invoice-total">
         <strong>Total:</strong> <span>£300</span>
       </div>
