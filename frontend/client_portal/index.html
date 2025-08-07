@@ -1,4 +1,39 @@
-<tbody>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>XLedger Client Portal</title>
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- Font Awesome for status icons -->
+  <script src="https://kit.fontawesome.com/a2e0e6a012.js" crossorigin="anonymous"></script>
+</head>
+<body>
+  <div class="container">
+    <h1><span class="green">X</span>LEDGER Client Invoice Portal</h1>
+
+    <div class="invoice-header">
+      <p><strong>Invoice ID:</strong> INV-001</p>
+      <p><strong>Lawyer:</strong> Jane Smith</p>
+      <p><strong>Client:</strong> John Doe</p>
+      <p><strong>Date:</strong> 19 June 2025</p>
+      <p><strong>Created By:</strong> Varshini Dilli Babu</p>
+    </div>
+
+    <button class="download-btn">Download Invoice</button>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Task</th>
+          <th>Hours</th>
+          <th>Cost</th>
+          <th>Timestamp</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
   <tr>
     <td>Consultation</td>
     <td>2</td>
@@ -19,5 +54,17 @@
     <td>£50</td>
     <td>2:00 PM</td>
     <td><span style="color: green; font-weight: 600;">Verified</span></td>
+  </tr>
+</tbody>
+
+    </table>
+
+    <div class="total">
+      <strong>Total: <span style="color: #0077ff;">£300</span></strong>
+    </div>
+  </div>
+</body>
+</html>
+ style="color: green; font-weight: 600;">Verified</span></td>
   </tr>
 </tbody>
