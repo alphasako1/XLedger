@@ -8,7 +8,7 @@ Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
-# 🚨 CORS SETTINGS FOR DEV ONLY
+# CORS SETTINGS FOR DEV ONLY
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173"],  # frontend dev server
