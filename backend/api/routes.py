@@ -147,7 +147,7 @@ def sign_contract(case_id: str, data: ClientSignContract, current_user: User = D
     contract.client_signature = data.client_signature
     db.commit()
 
-    # ✅ Check if both parties have signed
+    # Check if both parties have signed
     if contract.lawyer_signed and contract.client_signed:
         case.status = "active"
         db.commit()
@@ -318,7 +318,7 @@ def edit_progress_log(
     if current_user.role != "lawyer" or log.lawyer_id != current_user.id:
         raise HTTPException(status_code=403, detail="Unauthorized to edit this log")
 
-    # ✅ Insert this block *before* modifying the log
+    # Insert this block *before* modifying the log
     history = ProgressLogHistory(
         log_id=log.id,
         old_description=log.description,
@@ -328,7 +328,7 @@ def edit_progress_log(
     )
     db.add(history)
 
-    # ✅ Now update the original log
+    # Now update the original log
     log.description = data.description
     log.time_spent = data.time_spent
     log.is_edited = True
@@ -336,7 +336,7 @@ def edit_progress_log(
     db.commit()
     db.refresh(log)
 
-    # ✅ Adjust case summary after log edit
+    # Adjust case summary after log edit
     summary = db.query(models.CaseSummary).filter(models.CaseSummary.case_id == log.case_id).first()
     if summary:
         time_diff = data.time_spent - history.old_time_spent
