@@ -26,7 +26,9 @@ class Case(Base):
     title = Column(String)
     status = Column(String, default="pending")
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))  # 👈 Add this line
-
+    on_chain_address = Column(String, nullable=True)  # store case contract address
+    on_chain_tx = Column(String, nullable=True)
+    
     lawyer_id = Column(Integer, ForeignKey("users.id"))
     client_id = Column(Integer, ForeignKey("users.id"))
 
@@ -35,6 +37,8 @@ class Case(Base):
     client = relationship("User", back_populates="cases_as_client", foreign_keys=[client_id])
     
     logs = relationship("ProgressLog", back_populates="case")
+    
+
 
 class CaseContract(Base):
     __tablename__ = "case_contracts"
@@ -77,7 +81,7 @@ class ProgressLogHistory(Base):
     old_time_spent = Column(Integer)
     edited_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
     edited_by = Column(Integer, ForeignKey("users.id"))
-
+    old_timestamp = Column(DateTime, nullable=False)
     log = relationship("ProgressLog")
     editor = relationship("User")
 
@@ -105,3 +109,14 @@ class CaseStatusChange(Base):
 
     case = relationship("Case", backref="status_changes")
     user = relationship("User")
+
+
+class CaseAuditAccess(Base):
+    __tablename__ = "case_audit_access"
+
+    id = Column(Integer, primary_key=True, index=True)
+    case_id = Column(String, ForeignKey("cases.id"))
+    auditor_email = Column(String)  # or auditor_id if they are a registered user
+    granted_by = Column(Integer, ForeignKey("users.id"))
+    granted_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    expires_at = Column(DateTime, nullable=True)  # optional expiry
