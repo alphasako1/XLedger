@@ -1,12 +1,17 @@
 from pydantic import BaseModel
 from datetime import datetime
 from typing import Optional
+from enum import Enum
 
+class UserRole(str, Enum):
+    lawyer = "lawyer"
+    client = "client"
+    auditor = "auditor"
 
 class RegisterData(BaseModel):
     email: str
     password: str
-    role: str
+    role: UserRole
 
 class LoginData(BaseModel):
     email: str
@@ -32,6 +37,8 @@ class CaseOut(BaseModel):
     status: str
     lawyer_id: int
     client_id: int
+    on_chain_address: Optional[str]
+    on_chain_tx: Optional[str] 
 
     class Config:
         from_attributes = True
