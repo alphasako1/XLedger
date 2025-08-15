@@ -22,7 +22,7 @@ Yuan Zhu
 ---
 
 ## Repo layout
-backend/ # FastAPI app
+### backend/ # FastAPI app
 api/routes.py
 db/{database.py, models.py}
 utils/{blockchain.py, id_generator.py, security.py}
@@ -30,12 +30,12 @@ artifacts/{CaseFactory.json, CaseContract.json} # ABIs used by backend
 main.py, schemas.py, requirements.txt
 .env.example # ← create your .env from this
 
-frontend/ # Vite + React + Tailwind UI
+### frontend/ # Vite + React + Tailwind UI
 public/
 src/
 package.json, vite.config.js, tailwind.config.js, postcss.config.js
 
-blockchain/ # Hardhat + Solidity
+### blockchain/ # Hardhat + Solidity
 contracts/{CaseFactory.sol, CaseContract.sol}
 scripts/deploy.js
 hardhat.config.js
@@ -51,7 +51,7 @@ package.json
 - Python **3.11+** (3.13 OK)
 - Git
 
-### 1) Install dependencies
+## 1) Install dependencies
 ```bash
 # blockchain
 cd blockchain
@@ -124,6 +124,9 @@ cd frontend
 npm run dev
 # http://localhost:5173
 ```
+
+---
+
 ## Using the app
 ### 1) Register three users via the UI (User ID's given by order i.e. first user created = 1):
 - Lawyer
@@ -143,4 +146,9 @@ Each log is hashed off-chain and added to the contract. Edits create new version
 The app recomputes hashes and compares against on-chain values.
 A lawyer must first grant access to the can before an auditor can varify it (In a lawyer's case click grant access and add the auditor email and duration of access).
 
+---
+
+## Environment Variables
+### backend/.env
+-```bash WEB3_PROVIDER``` - e.g., ```bash http://127.0.0.1:8545```
 
