@@ -13,7 +13,7 @@ export default function RegisterPage() {
   async function handleRegister(e) {
     e.preventDefault();
 
-    const res = await fetch('http://localhost:8000/register', {
+    const res = await fetch('/api/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password, role }),
@@ -98,3 +98,4 @@ export default function RegisterPage() {
     </div>
   );
 }
+
