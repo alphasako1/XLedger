@@ -32,7 +32,7 @@ export default function AuditorDashboard() {
 
     try {
       const res = await fetch(
-        `http://localhost:8000/audit/verify_log/${caseId}/${logId}`,
+        `/api/audit/verify_log/${caseId}/${logId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       const data = await res.json();
@@ -54,7 +54,7 @@ export default function AuditorDashboard() {
 
     try {
       const res = await fetch(
-        `http://localhost:8000/audit/verify_case/${caseIdAll}`,
+        `/api/audit/verify_case/${caseIdAll}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       const data = await res.json();
@@ -222,3 +222,4 @@ export default function AuditorDashboard() {
     </div>
   );
 }
+
