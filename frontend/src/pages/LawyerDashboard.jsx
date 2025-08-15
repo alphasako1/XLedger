@@ -17,7 +17,7 @@ export default function LawyerDashboard() {
   const token = localStorage.getItem("token");
 
   async function fetchCases() {
-    const res = await fetch("http://localhost:8000/my_cases", {
+    const res = await fetch("/api/my_cases", {
       headers: { Authorization: `Bearer ${token}` },
     });
     if (!res.ok) return;
@@ -35,7 +35,7 @@ export default function LawyerDashboard() {
     setError(null);
     setSaving(true);
     try {
-      const res = await fetch("http://localhost:8000/create_case", {
+      const res = await fetch("/api/create_case", {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify({
@@ -132,3 +132,4 @@ export default function LawyerDashboard() {
     </div>
   );
 }
+
