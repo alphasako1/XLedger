@@ -1,0 +1,90 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+
+  --color-brand-green: #16A34A;
+  --color-brand-blue:  #2563EB;
+  --color-brand-dark:  #0B1220;
+
+  --shadow-soft: 0 8px 30px rgba(0,0,0,.06);
+
+  /* Add the slate tokens you use in classes/@apply */
+  --color-slate-200: #e2e8f0;
+  --color-slate-300: #cbd5e1;
+  --color-slate-600: #475569;
+  --color-slate-700: #334155;
+  --color-slate-800: #1f2937;
+}
+
+/* Brand gradient background for the app shell */
+:root {
+  --grad-from: #c7f9cc; /* soft green */
+  --grad-to:   #a5c9ff; /* soft blue */
+}
+
+html, body, #root { height: 100%; }
+body {
+  @apply font-sans text-slate-800 bg-gradient-to-tr from-[var(--grad-from)] to-[var(--grad-to)];
+}
+
+
+/* Brand gradient background for the app shell */
+:root {
+  --grad-from: #c7f9cc; /* soft green */
+  --grad-to:   #a5c9ff; /* soft blue */
+}
+
+html, body, #root { height: 100%; }
+body {
+  @apply font-sans text-slate-800 bg-gradient-to-tr from-[var(--grad-from)] to-[var(--grad-to)];
+}
+
+/* Simple containers & cards */
+.container-app {
+  @apply mx-auto max-w-6xl px-4 md:px-6 lg:px-8;
+}
+.card {
+  @apply rounded-2xl bg-white/80 backdrop-blur shadow-soft border border-white/60;
+}
+.card-body {
+  @apply p-6 md:p-8;
+}
+
+/* Inputs */
+.input {
+  @apply w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm outline-none
+         focus:ring-2 focus:ring-brand-blue/40 focus:border-brand-blue;
+}
+.label { @apply block text-sm font-medium text-slate-700 mb-1; }
+
+/* Buttons */
+.btn {
+  @apply inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium
+         transition-colors outline-none focus-visible:ring-2 focus-visible:ring-offset-2;
+}
+.btn-primary { @apply bg-brand-blue text-white hover:bg-blue-600 focus-visible:ring-brand-blue; }
+.btn-secondary { @apply bg-white text-slate-800 border border-slate-300 hover:bg-slate-50; }
+.btn-ghost { @apply text-slate-600 hover:bg-slate-200/60; }
+.btn-danger { @apply bg-red-600 text-white hover:bg-red-700 focus-visible:ring-red-600; }
+
+/* Table */
+.table {
+  @apply w-full text-sm;
+}
+.table th {
+  @apply text-left font-semibold text-slate-600 sticky top-0 bg-white/90 backdrop-blur;
+}
+.table th, .table td {
+  @apply px-3 py-2 border-b border-slate-200;
+}
+.table tr:hover td { @apply bg-slate-50; }
+
+/* Badges */
+.badge { @apply inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium; }
+.badge-ok { @apply bg-green-100 text-green-700; }
+.badge-bad { @apply bg-red-100 text-red-700; }
+
+/* Headings */
+.h1 { @apply text-3xl md:text-4xl font-black tracking-tight text-brand-dark; }
+.h2 { @apply text-xl md:text-2xl font-semibold text-brand-dark; }
