@@ -6,7 +6,7 @@ export default function CaseSummaryViewer({ caseId, token }) {
   const [show, setShow] = useState(false);
 
   async function fetchSummary() {
-    const res = await fetch(`http://localhost:8000/case_summary/${caseId}`, {
+    const res = await fetch(`/api/case_summary/${caseId}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     if (res.ok) {
@@ -59,3 +59,4 @@ export default function CaseSummaryViewer({ caseId, token }) {
     </div>
   );
 }
+
