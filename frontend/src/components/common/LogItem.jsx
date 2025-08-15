@@ -8,7 +8,7 @@ export default function LogItem({ log, token, onLogUpdated, readOnly = false }) 
   const [history, setHistory] = useState([]);
 
   async function handleUpdate() {
-    const res = await fetch(`http://localhost:8000/edit_log/${log.id}`, {
+    const res = await fetch(`/api/edit_log/${log.id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -108,3 +108,4 @@ export default function LogItem({ log, token, onLogUpdated, readOnly = false }) 
     </li>
   );
 }
+
