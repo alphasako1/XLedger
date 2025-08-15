@@ -125,4 +125,22 @@ npm run dev
 # http://localhost:5173
 ```
 ## Using the app
-### 1) Register three users via the UI:
+### 1) Register three users via the UI (User ID's given by order i.e. first user created = 1):
+- Lawyer
+- Client
+- Auditor
+
+### 2) **Lawyer** signs in → **Create Case** (pending contract is created in DB).
+A case ID is generated as "C-Lawyer ID-Client ID-Number of case between this lawyer and client"
+A log ID is generated as "L-C-Lawyer ID-Client ID-Number of case between this lawyer and client-Number of log under this case"
+### 3) **Client** signs in → **Review & Sign** the contract
+Once both sides sign, the CaseFactory deploys a CaseContract and the case status becomes active.
+
+### 4) **Lawyer** logs work
+Each log is hashed off-chain and added to the contract. Edits create new versions on-chain.
+
+### 5) **Auditor** signs in → **Verify Log** or **Verify Case**
+The app recomputes hashes and compares against on-chain values.
+A lawyer must first grant access to the can before an auditor can varify it (In a lawyer's case click grant access and add the auditor email and duration of access).
+
+
