@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.20;
 
 import "./CaseContract.sol";
@@ -27,3 +27,4 @@ contract CaseFactory {
         return caseContracts[caseId];
     }
 }
+
