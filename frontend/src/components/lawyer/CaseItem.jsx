@@ -106,7 +106,7 @@ export default function CaseItem({ caseData, token, onRefresh }) {
   const [showStatus, setShowStatus] = useState(false);
 
   async function fetchLogs() {
-    const res = await fetch(`http://localhost:8000/case_logs/${caseData.id}`, {
+    const res = await fetch(`/api/case_logs/${caseData.id}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     if (!res.ok) return alert("Failed to fetch logs");
@@ -221,4 +221,5 @@ export default function CaseItem({ caseData, token, onRefresh }) {
     </div>
   );
 }
+
 
