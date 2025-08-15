@@ -11,7 +11,7 @@ export default function ClientLogViewer({ caseId, token, embedded = false }) {
   const [showLogs, setShowLogs] = useState(embedded);
 
   async function fetchLogs() {
-    const res = await fetch(`http://localhost:8000/case_logs/${caseId}`, {
+    const res = await fetch(`/api/case_logs/${caseId}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     if (!res.ok) {
@@ -67,3 +67,4 @@ export default function ClientLogViewer({ caseId, token, embedded = false }) {
     </div>
   );
 }
+
