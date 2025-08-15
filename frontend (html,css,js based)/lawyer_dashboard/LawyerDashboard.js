@@ -18,7 +18,7 @@ function addTask() {
   })
   .then(response => response.ok && (() => {
     const list = document.createElement("li");
-    li.textContent = task + " - " + hour + " hours";
+    list.textContent = task + " - " + hour + " hours";
     document.getElementById("taskList").appendChild(list);
     document.getElementById("taskcontent").value = "";
     document.getElementById("hours").value = "";
