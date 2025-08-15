@@ -10,7 +10,7 @@ export default function ContractReview({ caseId, token, onSigned }) {
     async function fetchContract() {
       setMsg(null);
       try {
-        const res = await fetch(`http://localhost:8000/contract/${caseId}`, {
+        const res = await fetch(`/api/contract/${caseId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (!res.ok) {
@@ -99,3 +99,4 @@ export default function ContractReview({ caseId, token, onSigned }) {
     </div>
   );
 }
+
