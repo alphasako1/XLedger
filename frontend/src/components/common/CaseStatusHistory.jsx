@@ -8,7 +8,7 @@ export default function CaseStatusHistory({ caseId, token }) {
   useEffect(() => {
     if (!show) return;
     async function fetchHistory() {
-      const res = await fetch(`http://localhost:8000/case_status_history/${caseId}`, {
+      const res = await fetch(`/api/case_status_history/${caseId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (res.ok) {
@@ -55,3 +55,4 @@ export default function CaseStatusHistory({ caseId, token }) {
     </div>
   );
 }
+
