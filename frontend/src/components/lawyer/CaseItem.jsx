@@ -19,7 +19,7 @@ function GrantAuditAccess({ caseId, token }) {
     try {
       const hrs = Math.max(1, parseInt(hours || 24, 10));
       const url =
-        `http://localhost:8000/audit/grant_access/${caseId}` +
+        `/api/audit/grant_access/${caseId}` +
         `?auditor_email=${encodeURIComponent(email)}&expiry_hours=${hrs}`;
 
       const res = await fetch(url, {
@@ -221,3 +221,4 @@ export default function CaseItem({ caseData, token, onRefresh }) {
     </div>
   );
 }
+
