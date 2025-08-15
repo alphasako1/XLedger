@@ -69,6 +69,7 @@ python -m venv .venv
 # macOS/Linux:
 source .venv/bin/activate
 pip install -r requirements.txt
+```
 
 ###2) Start a local blockchain & deploy contracts
 
