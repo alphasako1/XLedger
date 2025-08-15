@@ -23,24 +23,24 @@ Yuan Zhu
 
 ## Repo layout
 ### backend/ # FastAPI app
-- api/routes.py
-- db/{database.py, models.py}
-- utils/{blockchain.py, id_generator.py, security.py}
-- artifacts/{CaseFactory.json, CaseContract.json} # ABIs used by backend
-- main.py, schemas.py, requirements.txt
-- .env.example # ← create your .env from this
+- ```bash api/routes.py```
+- ```bash db/{database.py, models.py}```
+- ```bash utils/{blockchain.py, id_generator.py, security.py}```
+- ```bash artifacts/{CaseFactory.json, CaseContract.json}``` # ABIs used by backend
+- ```bash main.py, schemas.py, requirements.txt```
+- ```bash .env.example``` # ← create your .env from this
 
 ### frontend/ # Vite + React + Tailwind UI
-- public/
-- src/
-- package.json, vite.config.js, tailwind.config.js, postcss.config.js
+- ```bash public/```
+- ```bash src/```
+- ```bash package.json, vite.config.js, tailwind.config.js, postcss.config.js```
 
 ### blockchain/ # Hardhat + Solidity
-- contracts/{CaseFactory.sol, CaseContract.sol}
-- scripts/deploy.js
-- hardhat.config.js
-- package.json
-- .env.example # ← create your .env from this
+- contracts/{```bash CaseFactory.sol, CaseContract.sol```}
+- ```bash scripts/deploy.js```
+- ```bash hardhat.config.js```
+- ```bash package.json```
+- ```bash .env.example``` # ← create your .env from this
 
 ---
 
@@ -217,7 +217,8 @@ PRs and issues welcome. Please avoid committing secrets, build output, or databa
 ---
 
 ## License
-MIT License
+> All rights reserved. No use, reproduction, or distribution without
+> prior written permission. Smart contracts are UNLICENSED unless stated otherwise.
 
 ---
 
