@@ -12,7 +12,7 @@ export default function LogForm({ caseId, token, onSuccess, onClose }) {
     setLoading(true);
 
     try {
-      const res = await fetch("http://localhost:8000/log_progress", {
+      const res = await fetch("/api/log_progress", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -89,3 +89,4 @@ export default function LogForm({ caseId, token, onSuccess, onClose }) {
     </form>
   );
 }
+
