@@ -23,35 +23,24 @@ Yuan Zhu
 
 ## Repo layout
 ### backend/ # FastAPI app
-api/routes.py
-
-db/{database.py, models.py}
-
-utils/{blockchain.py, id_generator.py, security.py}
-
-artifacts/{CaseFactory.json, CaseContract.json} # ABIs used by backend
-
-main.py, schemas.py, requirements.txt
-
-.env.example # ← create your .env from this
+- api/routes.py
+- db/{database.py, models.py}
+- utils/{blockchain.py, id_generator.py, security.py}
+- artifacts/{CaseFactory.json, CaseContract.json} # ABIs used by backend
+- main.py, schemas.py, requirements.txt
+- .env.example # ← create your .env from this
 
 ### frontend/ # Vite + React + Tailwind UI
-public/
-
-src/
-
-package.json, vite.config.js, tailwind.config.js, postcss.config.js
+- public/
+- src/
+- package.json, vite.config.js, tailwind.config.js, postcss.config.js
 
 ### blockchain/ # Hardhat + Solidity
-contracts/{CaseFactory.sol, CaseContract.sol}
-
-scripts/deploy.js
-
-hardhat.config.js
-
-package.json
-
-.env.example # ← create your .env from this
+- contracts/{CaseFactory.sol, CaseContract.sol}
+- scripts/deploy.js
+- hardhat.config.js
+- package.json
+- .env.example # ← create your .env from this
 
 ---
 
