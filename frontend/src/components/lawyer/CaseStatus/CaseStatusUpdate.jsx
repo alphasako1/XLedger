@@ -21,7 +21,7 @@ export default function CaseStatusUpdate({ caseId, token, onUpdated }) {
     };
 
     try {
-      const res = await fetch(`http://localhost:8000/update_case_status/${caseId}`, {
+      const res = await fetch(`/api/update_case_status/${caseId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -110,3 +110,4 @@ export default function CaseStatusUpdate({ caseId, token, onUpdated }) {
     </form>
   );
 }
+
