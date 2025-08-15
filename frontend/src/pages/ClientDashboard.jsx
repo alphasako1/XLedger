@@ -12,7 +12,7 @@ export default function ClientDashboard() {
   const token = localStorage.getItem("token");
 
   async function fetchCases() {
-    const res = await fetch("http://localhost:8000/my_cases", {
+    const res = await fetch("/api/my_cases", {
       headers: { Authorization: `Bearer ${token}` },
     });
     if (!res.ok) {
@@ -133,3 +133,4 @@ function ClientCaseCard({ caseData, token }) {
     </div>
   );
 }
+
