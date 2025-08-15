@@ -71,5 +71,57 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-###2) Start a local blockchain & deploy contracts
+### 2) Start a local blockchain & deploy contracts
+## Open Terminal A:
+```bash
+cd blockchain
+npx hardhat node
+# keep running
+```
+## Open Terminal B:
+```bash
+cd blockchain
+npx hardhat run scripts/deploy.js --network localhost
+# Copy the CaseFactory address that prints (0x...)
+```
+### 3) Configure environment files
+## Create real .env files from the provided examples.
+backend/.env
+```bash
+# Local Hardhat node
+WEB3_PROVIDER=http://127.0.0.1:8545
+
+# Use ANY private key printed by `npx hardhat node`
+# (the account must have ETH on the local node)
+PRIVATE_KEY=0x...
+
+# Paste the address printed by deploy.js above
+FACTORY_ADDRESS=0x...
+
+# Optional DB override (defaults to ./test.db)
+# DATABASE_URL=sqlite:///./test.db
+```
+blockchain.env
+```bash
+WEB3_PROVIDER=http://127.0.0.1:8545
+PRIVATE_KEY=0x...   # can match backend .env
+```
+**Note:** ABIs for the backend are already checked into backend/artifacts/. The blockchain/artifacts/ build output is ignored.
+
+### 4) Run the backend
+## Open Terminal C:
+```bash
+cd backend
+# activate your venv if not already
+uvicorn backend.main:app --reload --port 8000
+# http://localhost:8000
+```
+
+### 5) Run the frontend
+## Open Terminal D:
+```bash
+cd frontend
+npm run dev
+# http://localhost:5173
+```
 
