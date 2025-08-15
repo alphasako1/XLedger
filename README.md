@@ -111,7 +111,7 @@ PRIVATE_KEY=0x...   # can match backend .env
 ## 4) Run the backend
 ### Open Terminal C:
 ```bash
-cd backend
+cd XLedger
 # activate your venv if not already
 uvicorn backend.main:app --reload --port 8000
 # http://localhost:8000
