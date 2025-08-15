@@ -18,7 +18,7 @@ export default function Login() {
     setLoading(true);
 
     try {
-      const res = await fetch('http://localhost:8000/login', {
+      const res = await fetch('/api/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
@@ -49,7 +49,7 @@ export default function Login() {
       else if (role === 'client') navigate('/client');
       else if (role === 'auditor') navigate('/auditor');
     } catch {
-      setError('Could not reach server. Is the backend running on http://localhost:8000?');
+      setError('Could not reach server. Is the backend running on /api?');
     } finally {
       setLoading(false);
     }
@@ -122,3 +122,4 @@ export default function Login() {
     </div>
   );
 }
+
